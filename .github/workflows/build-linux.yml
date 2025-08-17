@@ -8,12 +8,10 @@ jobs:
     container:
       image: debian:bookworm-slim
     steps:
-      - name: Install build tools
+      - name: Install build deps
         run: |
-          apt-get update
-          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-            build-essential git ca-certificates zip file
-          update-ca-certificates
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake zip
       - name: Check out repo
         uses: actions/checkout@v4
       - name: Build whisper.cpp
