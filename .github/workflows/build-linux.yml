@@ -7,21 +7,28 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: debian:bookworm-slim
+
     steps:
       - name: Install build deps
         run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential cmake zip
-      - name: Check out repo
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            build-essential cmake zip ca-certificates git file
+          update-ca-certificates
+
+      - name: Checkout
         uses: actions/checkout@v4
+
       - name: Build whisper.cpp
         run: |
           make -j
+          file main || true
           strip main || true
           chmod +x main
+
       - name: Package artifact
-        run: |
-          zip -9 whispercpp-linux-x86_64.zip main
+        run: zip -9 whispercpp-linux-x86_64.zip main
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
